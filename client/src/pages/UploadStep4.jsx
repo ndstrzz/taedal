@@ -1,5 +1,4 @@
-// client/src/pages/UploadStep4.jsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./UploadStep4.css";
 
 /* ---------- Stepper art ---------- */
@@ -22,7 +21,7 @@ import BrainGLB from "../assets/minting-page/tech-brain.glb";
 
 /* ---------- Left block assets ---------- */
 import BlockchainSettings from "../assets/minting-page/blockchain-settings.svg";
-import BaseSepolia from "../assets/minting-page/base-sepolia.svg";
+import BaseSepolia from "../assets/minting-page/base-sepolia.svg"; // just the art label
 import ContractStand from "../assets/minting-page/contract-stand.svg";
 
 /* ---------- Bottom buttons ---------- */
@@ -40,9 +39,9 @@ const API = API_BASE;
 /* ---- animate 0.00 → 0.01 when visible ---- */
 function useCountUpWhenInView(ref, { from = 0, to = 0.01, ms = 1200, decimals = 2 } = {}) {
   const [value, setValue] = useState(from);
-  const started = useRef(false);
+  const started = React.useRef(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -83,6 +82,7 @@ export default function UploadStep4({ navigateToReview }) {
   const [txHash, setTxHash] = useState(null);
   const [tokenId, setTokenId] = useState(null);
   const [contract, setContract] = useState(NFT_ADDRESS);
+  const [mintError, setMintError] = useState("");
 
   const isProcessing = phase === "uploading" || phase === "minting";
   const isComplete = phase === "complete";
@@ -93,21 +93,30 @@ export default function UploadStep4({ navigateToReview }) {
   const storedArtworkId = localStorage.getItem("createdArtworkId") || null;
 
   const isMainnet = Number(CHAIN_ID) === 1;
-  const chainLabel = isMainnet ? "Ethereum" : "Base Sepolia";
+  const chainLabel = isMainnet ? "Ethereum" : "Sepolia";
 
   /* ---------- Continue → run mint flow (opens wallet) ---------- */
   const startMintFlow = async () => {
     if (isProcessing) return;
 
-    // STEP 1: Upload to IPFS (UX: animate to ~35%)
+    // Pre-checks
+    if (!NFT_ADDRESS) {
+      setMintError("NFT contract address is not configured.");
+      return;
+    }
+    if (typeof window === "undefined" || !window.ethereum) {
+      setMintError("No Ethereum wallet detected. Please install MetaMask.");
+      return;
+    }
+
+    setMintError("");
     setPhase("uploading");
     setProgress(0);
 
-    // surface existing image CID quickly if present (from server step-1)
+    // STEP 1: Upload to IPFS (cosmetic progress)
     await new Promise((r) => setTimeout(r, 250));
-    const cid = storedIpfs || "QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG"; // demo fallback
+    const cid = storedIpfs || "QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG"; // harmless placeholder
     setIpfsHash(cid);
-
     for (let i = 0; i <= 35; i += 5) {
       setProgress(i);
       // eslint-disable-next-line no-await-in-loop
@@ -129,13 +138,12 @@ export default function UploadStep4({ navigateToReview }) {
       });
 
     try {
-      const metadataCid = storedMeta || "bafybeigdyrmetadataexamplecid"; // demo fallback
+      const metadataCid = storedMeta || "bafybeigdyrmetadataexamplecid"; // harmless placeholder
       await advance(55);
 
       const tokenURI = `ipfs://${metadataCid}`;
       const artworkIdNum = storedArtworkId ? Number(storedArtworkId) : 0;
 
-      // MetaMask flow (returns hash + best-effort tokenId with static fallback)
       const res = await mintOnChain(tokenURI, artworkIdNum);
       await advance(85);
 
@@ -150,34 +158,28 @@ export default function UploadStep4({ navigateToReview }) {
         if (NFT_ADDRESS) localStorage.setItem("lastContract", NFT_ADDRESS);
       } catch {}
 
-      // Save on-chain linkage to server (so ReviewStep5 can fetch it back)
+      // Save on-chain linkage to server (best-effort)
       if (artworkIdNum && (res.hash || res.tokenId != null)) {
-        try {
-          await fetch(`${API}/api/artwork/${artworkIdNum}/onchain`, {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              tokenId: res.tokenId ?? null,
-              txHash: res.hash ?? null,
-            }),
-          }).catch(() => {});
-        } catch { /* non-blocking */ }
+        fetch(`${API}/api/artwork/${artworkIdNum}/onchain`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tokenId: res.tokenId ?? null, txHash: res.hash ?? null }),
+        }).catch(() => {});
       }
 
       await advance(100);
       setPhase("complete");
     } catch (err) {
       console.error("[mint] failed", err);
-
-      // If mint fails, still complete the flow for UI demo, but with dummy data
-      setTxHash("0x1234567890abcdef1234567890abcdef12345678901234567890abcdef123456");
-      setTokenId("123");
-      try {
-        localStorage.setItem("lastTxHash", "0x1234567890abcdef1234567890abcdef12345678901234567890abcdef123456");
-        localStorage.setItem("lastTokenId", "123");
-      } catch {}
-      setPhase("complete");
+      setMintError(
+        err?.message || "Mint failed. Check wallet connection, selected network, and contract."
+      );
+      // reset so user can try again
+      setPhase("idle");
+      setProgress(0);
+      setTxHash(null);
+      setTokenId(null);
     }
   };
 
@@ -194,7 +196,6 @@ export default function UploadStep4({ navigateToReview }) {
   return (
     <main className="mint-stage">
       <div className="mint-frame" aria-label="Mint – Step 4 (1440×1780)">
-
         {/* ---------- Stepper ---------- */}
         <img className="abs step step-1" src={Step1Done} alt="step 1 done" />
         <img className="abs line line-1" src={ProgressLine} alt="" />
@@ -214,22 +215,17 @@ export default function UploadStep4({ navigateToReview }) {
           <DogMint className="dog-mint-svg" />
         </div>
 
-        {/* ---------- Spinning 3D brain (fast while processing) ---------- */}
+        {/* ---------- Spinning 3D brain ---------- */}
         <div className="abs brain-3d">
-          <CoinViewer
-            src={BrainGLB}
-            autoRotate
-            autoRotateSpeed={isProcessing ? 3.2 : 0.6}
-          />
+          <CoinViewer src={BrainGLB} autoRotate autoRotateSpeed={isProcessing ? 3.2 : 0.6} />
         </div>
 
         {/* ---------- LEFT: Blockchain settings card ---------- */}
         <section className="abs card left-card">
           <img className="blk-title" src={BlockchainSettings} alt="blockchain settings" />
-
           <div className="blk-choose">choose blockchain</div>
-          <img className="blk-chain" src={BaseSepolia} alt="base sepolia" />
-
+          {/* purely visual label; we are on Ethereum Sepolia */}
+          <img className="blk-chain" src={BaseSepolia} alt="sepolia" />
           <img className="blk-std" src={ContractStand} alt="ERC-721 (standard NFT)" />
 
           {/* white inner cost box */}
@@ -263,19 +259,9 @@ export default function UploadStep4({ navigateToReview }) {
           </div>
 
           {/* IPFS pill */}
-          <div
-            className={[
-              "mproc-pill",
-              phase === "uploading" ? "is-active" : "",
-              ipfsHash ? "is-done" : "",
-            ].join(" ")}
-          >
+          <div className={["mproc-pill", phase === "uploading" ? "is-active" : "", ipfsHash ? "is-done" : ""].join(" ")}>
             <div className="pill-icon">
-              {phase === "uploading" && !ipfsHash ? (
-                <span className="spinner" />
-              ) : (
-                <span>✓</span>
-              )}
+              {phase === "uploading" && !ipfsHash ? <span className="spinner" /> : <span>✓</span>}
             </div>
             <div className="pill-copy">
               <div className="pill-h">Upload to IPFS</div>
@@ -287,19 +273,9 @@ export default function UploadStep4({ navigateToReview }) {
           </div>
 
           {/* Mint pill */}
-          <div
-            className={[
-              "mproc-pill",
-              phase === "minting" ? "is-active" : "",
-              isComplete ? "is-done" : "",
-            ].join(" ")}
-          >
+          <div className={["mproc-pill", phase === "minting" ? "is-active" : "", isComplete ? "is-done" : ""].join(" ")}>
             <div className="pill-icon">
-              {phase === "minting" && !txHash ? (
-                <span className="spinner" />
-              ) : (
-                <span>✓</span>
-              )}
+              {phase === "minting" && !txHash ? <span className="spinner" /> : <span>✓</span>}
             </div>
             <div className="pill-copy">
               <div className="pill-h">Mint NFT</div>
@@ -326,65 +302,37 @@ export default function UploadStep4({ navigateToReview }) {
             </div>
           )}
 
-          {/* Progress bar while processing */}
           {(phase === "uploading" || phase === "minting") && (
             <div className="progress-wrap">
-              <div className="progress">
-                <div className="bar" style={{ width: `${progress}%` }} />
-              </div>
+              <div className="progress"><div className="bar" style={{ width: `${progress}%` }} /></div>
               <div className="progress-caption mono">{progress}%</div>
             </div>
           )}
 
-          {/* Completion panel */}
           {isComplete && (
             <div className="complete-card">
-              <div className="complete-title">
-                <span>✓</span> Minting Complete!
-              </div>
-              <div className="kv mono">
-                <span className="k">Token ID</span>
-                <span className="v">#{tokenId || "—"}</span>
-              </div>
-              <div className="kv mono">
-                <span className="k">Contract</span>
-                <span className="v">{(contract || "").slice(0, 8)}…</span>
-              </div>
-              <div className="kv mono">
-                <span className="k">Blockchain</span>
-                <span className="v">{chainLabel}</span>
-              </div>
+              <div className="complete-title"><span>✓</span> Minting Complete!</div>
+              <div className="kv mono"><span className="k">Token ID</span><span className="v">#{tokenId || "—"}</span></div>
+              <div className="kv mono"><span className="k">Contract</span><span className="v">{(contract || "").slice(0, 8)}…</span></div>
+              <div className="kv mono"><span className="k">Blockchain</span><span className="v">{chainLabel}</span></div>
             </div>
           )}
         </section>
 
         {/* ---------- Bottom buttons ---------- */}
-        <img
-          className="abs back-upload-btn"
-          src={BackUploadBtn}
-          alt="back to upload"
-          role="button"
-          onClick={() => window.history.back()}
-        />
+        <img className="abs back-upload-btn" src={BackUploadBtn} alt="back to upload" role="button" onClick={() => window.history.back()} />
 
-        {/* Swap to the REVIEW button once complete */}
         {!isComplete ? (
-          <img
-            className={["abs continue-btn", isProcessing ? "is-disabled" : ""].join(" ")}
-            src={ContinueBtn}
-            alt="continue"
-            role="button"
-            onClick={startMintFlow}
-          />
+          <img className={["abs continue-btn", isProcessing ? "is-disabled" : ""].join(" ")} src={ContinueBtn} alt="continue" role="button" onClick={startMintFlow} />
         ) : (
-          <img
-            className="abs continue-btn"
-            src={ReviewBtn}
-            alt="review"
-            role="button"
-            onClick={goReview}
-            title="review your listing"
-          />
+          <img className="abs continue-btn" src={ReviewBtn} alt="review" role="button" onClick={goReview} title="review your listing" />
+        )}
+
+        {/* mint error */}
+        {mintError && (
+          <div className="abs" style={{ left: 100, top: 1620, color: "#f66", fontWeight: 700 }}>
+            {mintError}
+          </div>
         )}
       </div>
     </main>
