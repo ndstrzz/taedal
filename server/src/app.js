@@ -31,41 +31,33 @@ const app = express();
 // Render/Cloud provider sits behind a proxy → needed for 'secure' cookies to be honored
 app.set("trust proxy", 1);
 
-// -------- CORS (allow frontend with credentials) --------
-const allowedOrigins = new Set([
-  CORS_ORIGIN.replace(/\/+$/, ""),
-  "http://localhost:3000", // dev convenience
-]);
+// -------- CORS (force headers + handle preflights) --------
+const FE_ORIGIN = (process.env.CORS_ORIGIN || process.env.FRONTEND_BASE || "http://localhost:3000").replace(/\/+$/, "");
 
-app.use(
-  cors({
-    origin(origin, cb) {
-      // allow same-origin / no-origin (curl, health checks) and your FE origin
-      if (!origin) return cb(null, true);
-      const norm = String(origin).replace(/\/+$/, "");
-      if (allowedOrigins.has(norm)) return cb(null, true);
-      return cb(null, false);
-    },
-    credentials: true,
-    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    exposedHeaders: ["Set-Cookie"],
-  })
-);
+app.use((req, res, next) => {
+  // only allow our frontend + localhost dev
+  const origin = req.headers.origin;
+  const allow =
+    !origin ||
+    origin.replace(/\/+$/, "") === FE_ORIGIN ||
+    origin === "http://localhost:3000";
 
-// Ensure preflights are answered
-app.options(
-  "*",
-  cors({
-    origin(origin, cb) {
-      if (!origin) return cb(null, true);
-      const norm = String(origin).replace(/\/+$/, "");
-      if (allowedOrigins.has(norm)) return cb(null, true);
-      return cb(null, false);
-    },
-    credentials: true,
-  })
-);
+  if (allow) {
+    res.setHeader("Access-Control-Allow-Origin", origin || FE_ORIGIN);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With"
+    );
+  }
+
+  // short-circuit preflight
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
+
 
 // -------- Body parsing --------
 app.use(express.json({ limit: "5mb" }));
