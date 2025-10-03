@@ -1,0 +1,15 @@
+# client/netlify.toml
+
+[build]
+# Run the build from inside the client folder
+base = "client"
+# Install deps + build React
+command = "npm ci && npm run build"
+# Publish the build output (relative to 'base')
+publish = "build"
+
+# SPA routing (React Router)
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

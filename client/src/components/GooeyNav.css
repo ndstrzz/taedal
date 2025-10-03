@@ -1,0 +1,192 @@
+:root {
+  --linear-ease: linear(
+    0,
+    0.068,
+    0.19 2.7%,
+    0.804 8.1%,
+    1.037,
+    1.199 13.2%,
+    1.245,
+    1.27 15.8%,
+    1.274,
+    1.272 17.4%,
+    1.249 19.1%,
+    0.996 28%,
+    0.949,
+    0.928 33.3%,
+    0.926,
+    0.933 36.8%,
+    1.001 45.6%,
+    1.013,
+    1.019 50.8%,
+    1.018 54.4%,
+    1 63.1%,
+    0.995 68%,
+    1.001 85%,
+    1
+  );
+}
+
+/* GooeyNav.css – add this */
+.gooey-nav-container {
+  /* …keep your existing rules… */
+  --color-1: rgba(0, 0, 0, 0.95);
+  --color-2: rgba(0, 0, 0, 0.85);
+  --color-3: rgba(0, 0, 0, 0.75);
+  --color-4: rgba(0, 0, 0, 0.65);
+  --color-5: rgba(0, 0, 0, 0.55);
+  --color-6: rgba(0, 0, 0, 0.45);
+}
+
+.gooey-nav-container { position: relative; }
+
+.gooey-nav-container nav {
+  display: flex;
+  position: relative;
+  transform: translate3d(0,0,0.01px);
+}
+
+.gooey-nav-container nav ul {
+  display: flex;
+  gap: 2em;
+  list-style: none;
+  padding: 0 1em;
+  margin: 0;
+  position: relative;
+  z-index: 3;
+
+  /* default: black text, no shadow */
+  color: #111;
+  text-shadow: none;
+}
+
+/* remove any global borders/shadows */
+.gooey-nav-container nav ul li {
+  border-radius: 100vw;
+  position: relative;
+  cursor: pointer;
+  transition: color .3s ease, background-color .3s ease;
+  box-shadow: none !important;
+}
+
+.gooey-nav-container nav ul li a {
+  display: inline-block;
+  padding: 0.6em 1em;
+
+  /* kill borders from global navbar styles */
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
+  color: inherit;
+  border-radius: 100vw;
+}
+
+.gooey-nav-container nav ul li:focus-within:has(:focus-visible) {
+  box-shadow: none;
+}
+
+.gooey-nav-container nav ul li::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: #000;         /* black pill */
+  opacity: 0;
+  transform: scale(0);
+  transition: all .3s ease;
+  z-index: -1;
+}
+
+.gooey-nav-container nav ul li.active {
+  color: #fff;              /* white text on black pill */
+  text-shadow: none;
+}
+
+.gooey-nav-container nav ul li.active::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* animated “goo” */
+.gooey-nav-container .effect {
+  position: absolute;
+  left: 0; top: 0;
+  width: 0; height: 0;
+  opacity: 1;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.gooey-nav-container .effect.text {
+  color: #111;
+  transition: color .3s ease;
+}
+.gooey-nav-container .effect.text.active { color: #fff; }
+
+/* remove the dark dent behind, and use black pill */
+.gooey-nav-container .effect.filter {
+  filter: blur(7px) contrast(100) blur(0);
+  mix-blend-mode: normal;
+}
+.gooey-nav-container .effect.filter::before {
+  content: '';
+  position: absolute;
+  inset: -75px;
+  z-index: -2;
+  background: transparent;
+}
+.gooey-nav-container .effect.filter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000;         /* black */
+  transform: scale(0);
+  opacity: 0;
+  z-index: -1;
+  border-radius: 100vw;
+}
+.gooey-nav-container .effect.active::after { animation: pill .3s ease both; }
+
+@keyframes pill {
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* particles */
+.particle, .point {
+  display: block;
+  opacity: 0;
+  width: 20px; height: 20px;
+  border-radius: 100%;
+  transform-origin: center;
+}
+.particle {
+  --time: 5s;
+  position: absolute;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  animation: particle var(--time) ease 1 -350ms;
+}
+.point {
+  background: var(--color);
+  opacity: 1;
+  animation: point var(--time) ease 1 -350ms;
+}
+
+@keyframes particle {
+  0%   { transform: rotate(0deg) translate(var(--start-x), var(--start-y)); opacity: 1; animation-timing-function: cubic-bezier(.55,0,1,.45); }
+  70%  { transform: rotate(calc(var(--rotate) * .5)) translate(calc(var(--end-x) * 1.2), calc(var(--end-y) * 1.2)); opacity: 1; animation-timing-function: ease; }
+  85%  { transform: rotate(calc(var(--rotate) * .66)) translate(var(--end-x), var(--end-y)); opacity: 1; }
+  100% { transform: rotate(calc(var(--rotate) * 1.2)) translate(calc(var(--end-x) * .5), calc(var(--end-y) * .5)); opacity: 1; }
+}
+
+@keyframes point {
+  0%   { transform: scale(0); opacity: 0; animation-timing-function: cubic-bezier(.55,0,1,.45); }
+  25%  { transform: scale(calc(var(--scale) * .25)); }
+  38%  { opacity: 1; }
+  65%  { transform: scale(var(--scale)); opacity: 1; animation-timing-function: ease; }
+  85%  { transform: scale(var(--scale)); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}

@@ -1,0 +1,62 @@
+/* Scope everything to the login page so styles don't leak site-wide */
+.login-page {
+  min-height: 100vh;
+  background: #0b0b0b;            /* keep login dark, but only on this page */
+  display: grid;
+  place-items: center;
+  padding: 6vh 16px;
+  color: #fff;
+}
+
+.login-card {
+  width: min(420px, 92vw);
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px 20px 20px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+}
+
+.login-card h2 {
+  margin: 0 0 12px 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.input-group { margin: 12px 0; }
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  width: 100%;
+  background: #0e0e0e;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 3px rgba(108,92,231,0.25);
+}
+
+.primary-btn {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: #6c5ce7;
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.primary-btn:hover { filter: brightness(1.05); }
+
+.msg { margin-top: 10px; }

@@ -1,0 +1,29 @@
+@font-face {
+    font-family: 'THICCBOI';
+    src: url('./assets/fonts/THICCCBOI-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    font-family: 'THICCBOI', sans-serif;
+    background-color: #F2F2F2; /* New: Light background color */
+    color: #000;
+}
+
+.nft-chip {
+  display:inline-flex; gap:6px; align-items:center;
+  background:#141414; border:1px solid #333; color:#fff;
+  padding:4px 8px; border-radius:999px; font-size:12px;
+}
+.nft-chip a { color:#fff; text-decoration:none; opacity:.9 }
+.nft-chip a:hover { opacity:1; text-decoration:underline }
+.nft-chip .sep { opacity:.6 }
+
+html, body, #root { height: 100%; background: #000; } /* match your dark page */
+body { margin: 0; color: #eaeaea; }
+* { box-sizing: border-box; }
+
+/* Ensure nav labels + buttons use THICCBOI globally when needed */
+h1, h2, h3, .nav-link, .brand-text { font-family: THICCBOI, Inter, Arial, sans-serif; }

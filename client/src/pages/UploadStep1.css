@@ -1,0 +1,388 @@
+/* ===== Frame-locked canvas (1440 × 2513) ===== */
+.upload-stage{
+  --fig-w: 1440px;
+  --fig-h: 2513px;
+  --k: calc(min(100vw, 1440px) / 1440);
+  background:#000; color:#fff;
+  min-height: calc(var(--fig-h) * var(--k));
+  overflow-x: hidden;
+}
+.upload-frame{
+  position:relative;
+  width:var(--fig-w); height:var(--fig-h);
+  transform-origin: top left;
+  transform: scale(var(--k));
+}
+.abs{ position:absolute; }
+
+/* ---------- Stepper ---------- */
+.step-1 { left:111px;  top:100px; width:165.45px; height:65px; }
+.line-1 { left:278.74px; top:133.78px; width:72.71px; height:2px; }
+.step-2 { left:368.06px; top:100px; width:165.45px; height:65px; }
+.line-2 { left:533.31px; top:133.78px; width:72.71px; height:2px; }
+.step-3 { left:625.11px; top:100px; width:165.45px; height:65px; }
+.line-3 { left:790.57px; top:133.78px; width:72.71px; height:2px; }
+.step-4 { left:882.17px; top:100px; width:165.45px; height:65px; }
+.line-4 { left:1047.62px; top:133.78px; width:72.71px; height:2px; }
+.step-5 { left:1139.22px; top:100px; width:188.93px; height:65px; }
+
+/* ---------- Description ---------- */
+.upload-description { left:248px; top:281px; width:944px; height:139px; }
+
+/* ---------- Dropzone ---------- */
+.dropzone{
+  left:272.75px; top:454px;
+  width:894.5px; height:322px;
+  border-radius:52.79px;
+  border:2.4px dashed #fff;
+  position:absolute;
+  overflow:hidden;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* arrows (outside the border, above gallery) */
+.dz-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:46px; height:46px;
+  border-radius:12px;
+  border:2px solid #666;
+  background:#111;
+  color:#fff;
+  font-size:28px; line-height:42px;
+  text-align:center;
+  z-index:4;
+}
+.dz-arrow.left  { left:-62px;  }
+.dz-arrow.right { right:-62px; }
+
+.dz-arrow:hover{ border-color:#8aa; }
+
+/* when empty: perfectly center everything */
+.dz-center{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:12px;
+  text-align:center;
+  z-index:1;  /* below arrows, above gallery bg */
+}
+.dz-icon{ width:428px; height:206.15px; }
+.dz-help{ font: 700 22px/1.3 THICCBOI, Inter, Arial, sans-serif; }
+.dz-sub { font: 700 18px/1.3 THICCBOI, Inter, Arial, sans-serif; color:#e6e8eb; }
+
+/* horizontal gallery area */
+.dropzone-gallery{
+  position:absolute; inset:0;
+  padding:20px 28px;
+  display:flex; gap:18px;
+  overflow-x:auto; overflow-y:hidden;
+  align-items:center;
+  scroll-behavior:smooth;
+  z-index:2;
+}
+.thumb{
+  flex:0 0 auto;
+  width:283px;
+}
+.thumb-img{
+  width:283px; height:283px;
+  object-fit:cover;
+  border-radius:28px;
+  display:block;
+}
+.thumb-name{
+  margin-top:8px;
+  max-width:283px;
+  font:700 14px/1.2 THICCBOI, Inter, Arial, sans-serif;
+  color:#e6e8eb;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* Accent art with the glow/float from earlier */
+.dog-upload, .wiring{
+  will-change: transform, filter;
+  filter:
+    drop-shadow(0 16px 28px rgba(0,0,0,.55))
+    brightness(1.05) contrast(1.15) saturate(1.12);
+  transition:filter .2s ease, transform .2s ease;
+}
+.dog-upload{
+  left:-7px; top:767px; width:400px; height:439.5px;
+  animation:
+    dog-float-1 2.4s ease-in-out infinite alternate,
+    dog-shine-pulse-XL 1.2s ease-in-out infinite alternate;
+}
+.wiring{
+  left:651px; top:815.02px; width:141.05px; height:478.97px;
+  animation: dog-shine-pulse-XL 1.15s ease-in-out infinite alternate;
+}
+
+@keyframes dog-float-1 { 0%{transform:translateY(0) rotate(0)} 100%{transform:translateY(-14px) rotate(-1deg)} }
+@keyframes dog-shine-pulse-XL{
+  0%{ filter:drop-shadow(0 16px 28px rgba(0,0,0,.55)) brightness(1.05) contrast(1.15) saturate(1.12) }
+  50%{ filter:drop-shadow(0 20px 36px rgba(0,0,0,.6)) brightness(1.95) contrast(1.28) saturate(1.22) }
+  100%{ filter:drop-shadow(0 16px 28px rgba(0,0,0,.55)) brightness(1.05) contrast(1.15) saturate(1.12) }
+}
+
+/* ---------- Similarity block ---------- */
+.similarity{
+  left:136px; top:1347px; width:1169px; height:756px;
+  border-radius:117px; border:2px solid #fff; box-sizing:border-box;
+  position:absolute;
+}
+.similarity-title{
+  position:absolute; left:50%; top:42px; transform:translateX(-50%);
+  width:392px; height:97px;
+}
+.similarity-subline{
+  position:absolute; left:50%; top:130px; transform:translateX(-50%);
+  font:700 22px/1.2 THICCBOI, Inter, Arial, sans-serif;
+}
+.similarity-matches{
+  position:absolute; left:40px; right:40px; top:170px; bottom:120px;
+}
+.sim-error{
+  margin:4px 0 12px 0;
+  color:#f7b0b0;
+  font:700 16px/1.3 THICCBOI, Inter, Arial, sans-serif;
+}
+.sim-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap:12px;
+}
+.sim-card{
+  display:block; text-decoration:none; color:#fff;
+  background:#141414; border:1px solid #2f2f2f; border-radius:12px; overflow:hidden;
+}
+.sim-card img{ width:100%; height:120px; object-fit:cover; display:block; }
+.sim-meta{ padding:8px }
+.sim-title{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sim-user{ opacity:.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sim-rerun{
+  margin-top:14px; padding:10px 14px; border-radius:10px;
+  background:#1b1b1b; border:1px solid #2c2c2c; color:#fff; font-weight:800;
+}
+
+/* confirm line */
+.similarity-confirm{
+  position:absolute; left:354px; bottom:36px; height:23px;
+  display:flex; gap:10px; align-items:center;
+  font:700 20px/1 THICCBOI, Inter, Arial, sans-serif;
+}
+.similarity-confirm input{
+  appearance:none; width:23px; height:23px; border-radius:8px; border:2px solid #fff;
+}
+.similarity-confirm input:checked{ background:#fff; box-shadow: inset 0 0 0 4px #000; }
+.similarity-confirm span{ color:#fff; width:658px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+
+/* ---------- Bottom art ---------- */
+.portal{ left:502px; top:2154px; width:443px; height:334.25px; }
+.continue-btn{ left:939px; top:2229px; width:467px; height:70px; cursor:pointer; }
+
+/* focus ring */
+.dropzone:focus-visible, .continue-btn:focus-visible, .dz-arrow:focus-visible, .sim-rerun:focus-visible{
+  outline:3px solid #6cf; outline-offset:3px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .dog-upload, .wiring{ animation:none !important; transition:none !important; }
+}
+
+/* canvas wrapper occupies the dashed area */
+.dz-canvas-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+/* the fixed-size strip of thumbnails with delete buttons */
+.thumbs-fixed {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 24px;               /* place where you like */
+  display: flex;
+  gap: 12px;
+  z-index: 3;
+}
+
+.thumb-fixed {
+  position: relative;
+  width: 282px;
+  height: 281px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  outline: 1px dashed rgba(255,255,255,0.2);
+}
+
+.thumb-fixed img {
+  display: block;
+  width: 282px;
+  height: 281px;
+  object-fit: contain;       /* already resized, but safe */
+  background: transparent;
+}
+
+.thumb-del {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: #111;
+  background: #fff;
+  cursor: pointer;
+}
+.thumb-del:hover { opacity: 0.9; }
+
+/* UploadStep1.css — add these */
+.dropzone-gallery {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  overflow-x: auto;
+  padding: 16px 24px;
+  scroll-behavior: smooth;
+}
+
+.thumb {
+  position: relative;
+  width: 282px; height: 281px;
+  border-radius: 18px;
+  background: #0f0f0f;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.thumb-img {
+  width: 282px; height: 281px;
+  object-fit: contain;
+  border-radius: 18px;
+}
+
+.thumb-name {
+  position: absolute;
+  left: 10px; bottom: 10px;
+  right: 10px;
+  font-size: 12px;
+  color: #bbb;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.thumb-remove {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  border-radius: 999px;
+  border: 1px solid #444;
+  background: rgba(20,20,20,.85);
+  color: #fff;
+  font-size: 18px;
+  line-height: 26px;
+  text-align: center;
+  cursor: pointer;
+}
+.thumb-remove:hover { background: rgba(40,40,40,.9); }
+
+
+/* spinner overlay */
+.sim-spinner {
+  position: relative;
+  min-height: 80px;
+}
+.sim-spinner .spinner {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* similarity grid tweaks */
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.sim-card {
+  position: relative;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.sim-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+.sim-meta {
+  padding: 8px 10px 10px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #ddd;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px;
+}
+.sim-title { grid-column: 1 / -1; font-weight: 600; color: #fff; }
+.sim-user { opacity: 0.8; }
+.sim-dist { opacity: 0.6; font-feature-settings: "tnum" 1; }
+
+/* badges */
+.sim-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1;
+}
+.sim-badge.danger { background: #ff3b30; color: #fff; }
+.sim-badge.warn   { background: #f7b500; color: #111; }
+.sim-badge.soft   { background: #3a3a3a; color: #eee; }
+
+/* actions row */
+.sim-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.sim-rerun, .sim-viewall {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.sim-rerun[disabled] { opacity: 0.6; cursor: default; }
+.sim-viewall { border-color: rgba(255,255,255,0.25); }
+
+.sim-loading{display:flex;align-items:center;gap:.5rem;margin:.5rem 0}
+.spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.15);border-top-color:rgba(0,0,0,.6);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+

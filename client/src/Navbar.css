@@ -1,0 +1,140 @@
+/* client/src/Navbar.css */
+
+/* --- layout --- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: #f2f2f2;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+/* left cluster (logo) */
+.navbar-left { display: flex; align-items: center; gap: 10px; }
+.logo-link { display: inline-flex; align-items: center; text-decoration: none; }
+.taedal-logo-name { height: 22px; width: auto; display: block; user-select: none; -webkit-user-drag: none; }
+
+/* right cluster (links + mint) */
+.navbar-right { display: flex; align-items: center; gap: 16px; }
+
+/* top nav links — always black */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: lowercase;
+  text-decoration: none;
+  color: #111;
+  opacity: .9;
+  border-radius: 10px;
+  transition: opacity 140ms ease, transform 140ms ease, background 140ms ease;
+}
+.nav-link:hover { opacity: 1; transform: translateY(-1px); }
+.nav-link:active { transform: translateY(0); }
+.nav-link.active { opacity: 1; background: rgba(0,0,0,0.06); }
+
+/* mint button (image-based) */
+.mint-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 2px;
+  border-radius: 999px;
+  text-decoration: none;
+  outline: none;
+  transform: translateY(0);
+  transition: transform 140ms ease, filter 140ms ease;
+}
+.mint-btn:hover { transform: translateY(-1px); filter: drop-shadow(0 6px 14px rgba(0,0,0,.18)); }
+.mint-btn:active { transform: translateY(0); filter: none; }
+.mint-button-img { height: 26px; width: auto; display: block; user-select: none; -webkit-user-drag: none; }
+
+/* ===== Dropdown for "portfolio" ===== */
+.nav-item { position: relative; display: inline-flex; align-items: center; }
+
+/* container for the menu */
+.nav-menu {
+  position: absolute;
+  top: calc(100% + 2px);   /* tight vertical gap */
+  right: -4px;             /* visually aligns under the word */
+  min-width: 180px;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  z-index: 1200;
+
+  /* smooth show/hide */
+  opacity: 0;
+  transform: translateY(-4px);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    visibility 0s linear 140ms; /* hide after fade-out */
+}
+
+/* show on hover / focus-within */
+.has-menu:hover .nav-menu,
+.has-menu:focus-within .nav-menu {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    visibility 0s; /* show immediately */
+}
+
+/* invisible hover bridge between trigger and menu */
+.has-menu::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  top: 100%;
+  height: 10px; /* “bridge” height */
+}
+
+/* items inside the dropdown */
+.menu-link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #111;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  white-space: nowrap;
+  transition: background 140ms ease, transform 140ms ease;
+}
+.menu-link:hover,
+.menu-link:focus-visible { background: #f3f3f3; }
+
+/* small screens */
+@media (max-width: 640px) {
+  .navbar { height: 52px; padding: 0 12px; }
+  .navbar-right { gap: 10px; }
+  .nav-link { padding: 0 6px; font-size: 11px; letter-spacing: .14em; }
+  .taedal-logo-name { height: 20px; }
+  .mint-button-img { height: 24px; }
+  .nav-menu { min-width: 160px; }
+  .menu-link { font-size: 11px; letter-spacing: 0.1em; padding: 9px 10px; }
+}

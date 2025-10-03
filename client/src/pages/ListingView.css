@@ -1,0 +1,69 @@
+/* client/src/pages/ListingView.css */
+.listing-page{
+  background:#000; color:#fff;
+  min-height:100vh;
+}
+.lv-container{
+  max-width:1200px; margin:0 auto; padding:32px 20px;
+  display:grid; grid-template-columns: 1.2fr 1fr; gap:28px;
+}
+.lv-left{}
+.lv-image{
+  width:100%; height:auto; border-radius:16px; background:#0c0c0c;
+  border:1px solid rgba(255,255,255,.1);
+}
+.lv-image.alt{
+  display:flex; align-items:center; justify-content:center; height:600px;
+}
+
+.lv-right{}
+.lv-title{
+  font:900 34px/1.15 "THICCBOI", Inter, system-ui;
+}
+.mono{ font-family: ui-monospace, Menlo, Consolas, monospace; }
+.lv-sub{
+  opacity:.85; margin-top:6px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+}
+.lv-sub .dot{ opacity:.5; }
+
+.lv-price-card{
+  margin-top:16px; padding:16px; border-radius:14px; background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.12);
+}
+.lv-price{ font:900 28px/1 Inter, system-ui; }
+.lv-cta{ margin-top:12px; display:flex; gap:10px; }
+.buy-btn, .offer-btn{
+  appearance:none; border-radius:999px; padding:10px 16px; font-weight:900; cursor:not-allowed;
+}
+.buy-btn{ background:#fff; color:#000; border:0; }
+.offer-btn{ background:#151515; color:#fff; border:1px solid #333; }
+.lv-links{ margin-top:10px; display:flex; gap:12px; flex-wrap:wrap; }
+.lv-links a{ color:#9cf; text-decoration:underline; }
+
+.lv-tabs{ margin-top:18px; display:flex; gap:10px; }
+.lv-tabs button{
+  appearance:none; border:1px solid #333; background:#111; color:#fff; padding:8px 12px; border-radius:999px; font-weight:800; cursor:pointer; opacity:.9;
+}
+.lv-tabs button.is-active{ background:#fff; color:#000; border-color:#000; opacity:1; }
+
+.lv-panel{ margin-top:14px; background:#0b0b0b; border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:16px; }
+.lv-details .kv{
+  display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed rgba(255,255,255,.08);
+}
+.lv-details .kv:last-child{ border-bottom:0; }
+.lv-details .k{ opacity:.8; font-weight:800; }
+.lv-details .v{ font-weight:800; }
+.lv-desc{ margin:6px 0 12px; opacity:.95; }
+.lv-muted{ opacity:.7; }
+
+.lv-activity .act-row{
+  display:grid; grid-template-columns: 90px 1fr auto; gap:12px; padding:10px 0;
+  border-bottom:1px dashed rgba(255,255,255,.08);
+}
+.lv-activity .act-row:last-child{ border-bottom:0; }
+.act-type{ font-weight:800; opacity:.8; }
+.act-time{ opacity:.7; }
+
+@media (max-width: 1000px){
+  .lv-container{ grid-template-columns: 1fr; }
+}

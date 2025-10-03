@@ -1,0 +1,331 @@
+.mint-page { min-height: 100vh; background: #000; color: #fff; }
+
+/* intro */
+.mint-intro { max-width: 1100px; margin: 28px auto 8px; padding: 0 20px; }
+.mint-intro .line {
+  font-family: "THICCBOI", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800; font-size: clamp(16px, 2.4vw, 28px);
+  letter-spacing: .02em; line-height: 1.25; margin: 0 0 6px;
+}
+
+/* stage */
+.decks-stage { position: relative; max-width: 1300px; margin: 8px auto 0; min-height: 62vh; padding: 0 20px; }
+.decks-fan    { position: relative; height: clamp(360px, 46vw, 540px); margin-top: 24px; }
+
+/* deck slots */
+.deck-slot {
+  position: absolute; transform-origin: center bottom;
+  transition: left 260ms ease, bottom 260ms ease, transform 260ms ease, filter 220ms ease;
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,.45));
+  z-index: 1; outline: none;
+}
+.deck-slot.hoverable { cursor: pointer; }
+.deck-slot.open { z-index: 3; }
+
+/* fan positions */
+.deck-1 { left: 8%;  bottom: 0; transform: rotate(-14deg); }
+.deck-2 { left: 24%; bottom: 0; transform: rotate(-7deg);  }
+.deck-3 { left: 42%; bottom: 0; transform: rotate(-2deg);  }
+.deck-4 { left: 59%; bottom: 0; transform: rotate( 6deg);  }
+.deck-5 { left: 76%; bottom: 0; transform: rotate( 12deg); }
+
+.deck-img { display: block; width: clamp(230px, 26vw, 320px); height: auto; user-select: none; -webkit-user-drag: none; position: relative; z-index: 1; }
+
+/* focused layouts */
+.deck-slot.focused-left { left: max(16px, 3%); bottom: 6%; transform: scale(1.24) rotate(0deg); z-index: 8; filter: drop-shadow(0 18px 36px rgba(0,0,0,.6)); }
+.deck-2.focused-left, .deck-3.focused-left { left: clamp(260px, 32%, 420px); bottom: 6%; transform: scale(1.24) rotate(0deg); }
+.deck-4.focused-left { left: clamp(520px, 58%, 720px); bottom: 6%; transform: scale(1.24) rotate(0deg); }
+.deck-5.focused-left { left: clamp(790px, 77%, 980px); bottom: 6%; transform: scale(1.24) rotate(0deg); }
+
+.deck-slot.dim { filter: brightness(.55) blur(.3px); }
+
+/* ---------- Deck I ---------- */
+.deck1-panel { position: absolute; left: 15.5%; top: 24%; width: 68.5%; height: 46%; z-index: 12; }
+.deck1-hit { position: absolute; inset: 0; display: grid; place-items: center; cursor: pointer; }
+.upload-sticker {
+  font-family: "Breakfast Club","THICCBOI",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-weight: 800; font-size: clamp(18px, 2.1vw, 28px);
+  letter-spacing: .04em; background:#fff; color:#000; border:none; border-radius:10px; padding:12px 18px;
+  box-shadow:0 2px 0 #000, 0 10px 24px rgba(0,0,0,.28);
+}
+.preview-img { width:100%; height:100%; object-fit:cover; border-radius:6px; display:block; z-index: 13; }
+
+/* ---------- Deck II ---------- */
+.deck2-panel { position: absolute; left: 12%; top: 24%; width: 70%; height: 40%; display: grid; align-content: start; z-index: 12; }
+.deck2-field {
+  width: 100%; background: rgba(255,255,255,.06); color: #fff;
+  border: 2px solid rgba(255,255,255,.8); border-radius: 12px; padding: 12px 14px; outline: none;
+  font-family: "Breakfast Club","THICCBOI",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size: clamp(16px, 1.9vw, 22px);
+}
+.deck2-field:focus { box-shadow: 0 0 0 3px rgba(255,255,255,.18); }
+
+/* ---------- Deck III ---------- */
+.deck3-panel { position: absolute; left: 12%; top: 31%; width: 74%; height: 50%; z-index: 12; display: grid; grid-template-rows: 1fr auto; }
+.desc3-input {
+  width: 100%; height: 100%; background: transparent; color: #fff; border: none; outline: none; resize: none; padding: 18px; caret-color: #fff;
+  font-family: "Breakfast Club","THICCBOI",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif; font-size: clamp(14px, 1.6vw, 18px); line-height: 1.35;
+}
+.desc3-input::placeholder { color: rgba(255,255,255,.62); letter-spacing: .02em; }
+.desc3-count { text-align: right; font-size: 12px; opacity: .85; }
+
+/* ---------- Deck IV ---------- */
+.deck4-panel { position: absolute; left: 11%; top: 30%; width: 78%; height: 40%; z-index: 12; }
+.consent-box { position: absolute; left: 0; top: 0; width: 46px; height: 46px; cursor: pointer; user-select: none; }
+.consent-box input { position: absolute; opacity: 0; pointer-events: none; }
+.consent-box .box-img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.consent-box .checkmark { position: absolute; inset: 0; display:grid; place-items:center; font-size:30px; font-weight:900; color:#000; transform:translateY(1px); opacity:0; }
+.consent-box.checked .checkmark { opacity: 1; }
+
+/* ---------- Deck V (single overlay) ---------- */
+/* This overlay is always on top of the card, so the preview cannot hide. */
+.deck5-overlay{
+  position:absolute;
+  inset: 11% 9% 15% 9%; /* tuned to sit nicely inside your SVG card */
+  z-index: 20;
+}
+
+/* border image covers the overlay */
+.deck5-border{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:contain; pointer-events:none; z-index:21;
+}
+
+/* preview sits inside the border area — SMALLER so text has more room */
+.deck5-preview{
+  position:absolute;
+  inset: 10% 10% 42% 10%; /* top right bottom left — increased bottom to shrink the image area */
+  width:auto; height:auto;
+  max-width:80%; max-height:58%;
+  object-fit:cover; border-radius:6px; z-index:22;
+}
+.deck5-placeholder{
+  position:absolute;
+  inset: 10% 10% 42% 10%; /* match the preview box */
+  display:grid; place-items:center;
+  color:#bbb; font-weight:700; letter-spacing:.03em; z-index:22;
+}
+
+/* text block below the frame (inside the overlay) */
+.deck5-text{
+  position:absolute; left:4%; right:4%; bottom:4%; z-index:23;
+}
+.deck5-titleText, .deck5-artistText{
+  font-family:"Breakfast Club","THICCBOI",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size: clamp(18px, 2.2vw, 28px);
+  letter-spacing:.02em;
+}
+.deck5-artistText{ opacity:.9; margin-top:6px; }
+.deck5-descText{
+  margin-top:8px;
+  font-family:"THICCBOI", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(12px, 1.2vw, 16px);
+  line-height:1.45;
+}
+
+/* side mint column */
+.deck5-side{ position:absolute; right:-160px; top:8%; width:160px; height:84%; display:flex; flex-direction:column; align-items:center; z-index:24; }
+.deck5-side-copy{
+  font-family:"Breakfast Club","THICCBOI",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size: clamp(16px, 1.6vw, 18px); text-align:left; margin-bottom:10px; line-height:1.1;
+}
+.deck5-mint-btn{ background:transparent; border:none; padding:0; cursor:pointer; transition:transform .12s ease, filter .12s ease; }
+.deck5-mint-btn img{ display:block; width:160px; height:auto; }
+.deck5-mint-btn:hover{ transform:translateY(-2px); filter:brightness(1.08); }
+
+/* mask + footer */
+.deck-mask { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: #000; pointer-events: none; z-index: 4; }
+.mint-footer-copy { position: absolute; left: 24px; bottom: 10%; z-index: 5; font-family: "THICCBOI"; font-weight: 800; font-size: clamp(18px, 2.2vw, 26px); line-height: 1.25; }
+.mint-footer-copy p { margin: 0 0 6px; }
+
+/* modal */
+.mint-modal { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.6); z-index: 50; }
+.mint-modal-card { background: #111; border: 2px solid #fff; border-radius: 18px; padding: 22px 22px 16px; width: min(520px, 90%); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.mint-modal-card h3 { margin: 0 0 8px; font-family: "THICCBOI"; font-size: 22px; }
+.mint-modal-card p  { margin: 0 0 16px; opacity: .95; }
+.modal-ok { background: #fff; color: #000; border: none; border-radius: 10px; padding: 10px 16px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 0 #000, 0 8px 24px rgba(0,0,0,.3); }
+
+/* responsive */
+@media (max-width: 900px){
+  .deck-1{ left:2%; } .deck-2{ left:20%; } .deck-3{ left:40%; } .deck-4{ left:60%; } .deck-5{ left:78%; }
+  .deck-slot.focused-left{ left:12px; bottom:4%; transform:scale(1.18) rotate(0deg); }
+  .deck-2.focused-left, .deck-3.focused-left{ left:clamp(160px, 28%, 280px); bottom:4%; transform:scale(1.18) rotate(0deg); }
+  .deck-4.focused-left{ left:calc(50% + 12px); bottom:4%; transform:scale(1.12) rotate(0deg); }
+  .deck-5.focused-left{ left:calc(74% + 6px); bottom:4%; transform:scale(1.08) rotate(0deg); }
+
+  .deck1-panel{ left:14%; top:24.5%; width:72%; height:46%; }
+
+  /* keep smaller preview on mobile too */
+  .deck5-preview{ inset: 12% 10% 44% 10%; max-width:80%; max-height:56%; }
+  .deck5-placeholder{ inset: 12% 10% 44% 10%; }
+  .deck5-side{ right:-130px; width:130px; }
+  .deck5-mint-btn img{ width:130px; }
+}
+
+/* --- subtle animations for STATIC decks only --- */
+
+/* gentle idle float */
+.deck-slot.static .deck-img{
+  will-change: transform, filter;
+  transform-origin: center 90%;
+  animation: mintStaticFloat 7.2s ease-in-out infinite;
+}
+
+/* small stagger so cards don't move in sync */
+.decks-fan .deck-slot.static:nth-child(1) .deck-img{ animation-delay: .0s; }
+.decks-fan .deck-slot.static:nth-child(2) .deck-img{ animation-delay: .12s; }
+.decks-fan .deck-slot.static:nth-child(3) .deck-img{ animation-delay: .24s; }
+.decks-fan .deck-slot.static:nth-child(4) .deck-img{ animation-delay: .36s; }
+.decks-fan .deck-slot.static:nth-child(5) .deck-img{ animation-delay: .48s; }
+
+/* soft sheen sweep to suggest interactivity */
+.deck-slot.static::before{
+  content:"";
+  position:absolute; inset:-6% -10%;
+  pointer-events:none; mix-blend-mode:screen;
+  background: linear-gradient(115deg,
+              transparent 40%,
+              rgba(255,255,255,.16) 50%,
+              transparent 60%);
+  transform: translateX(-140%);
+  opacity:.35;
+  animation: mintStaticShine 7.6s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+/* when dimmed by another focused card, tone the sheen down */
+.deck-slot.dim::before{ opacity:.15; }
+
+/* hover hint on static cards */
+.deck-slot.static:hover .deck-img{
+  transform: translateY(-4px) scale(1.02) rotate(0deg);
+  filter: drop-shadow(0 18px 36px rgba(0,0,0,.65));
+}
+
+/* keyframes */
+@keyframes mintStaticFloat{
+  0%,100%{ transform: translateY(0) rotate(0deg); }
+  50%    { transform: translateY(-6px) rotate(.2deg); }
+}
+@keyframes mintStaticShine{
+  0%   { transform: translateX(-140%); }
+  35%  { transform: translateX(140%); }
+  100% { transform: translateX(140%); }
+}
+
+/* ----- success modal actions ----- */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 6px 0 12px;
+}
+.modal-copy {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #000, 0 8px 24px rgba(0,0,0,.3);
+  transition: transform .12s ease, filter .12s ease, background .12s ease;
+}
+.modal-copy:hover { transform: translateY(-1px); filter: brightness(1.06); background: rgba(255,255,255,.08); }
+
+/* ----- uploading modal with "card-swap" animation ----- */
+.mint-modal-card.loader {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding-top: 28px;
+  padding-bottom: 24px;
+}
+
+/* swap container */
+.swap {
+  position: relative;
+  width: 260px;
+  height: 140px;
+  perspective: 800px;
+}
+
+/* the two faces */
+.swap-card {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #fff;
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(255,255,255,.08), transparent 60%),
+    #111;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.08);
+  display: grid;
+  place-items: center;
+  font-family: "THICCBOI", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: lowercase;
+}
+
+/* face A animates out, face B animates in — then they loop */
+.swap-card.a { animation: swapA 1.6s ease-in-out infinite; }
+.swap-card.b { animation: swapB 1.6s ease-in-out infinite; }
+
+/* swap timings */
+@keyframes swapA {
+  0%   { transform: translateY(0px) rotateX(0deg);    opacity: 1; }
+  45%  { transform: translateY(-10px) rotateX(8deg);  opacity: .0; }
+  50%  { transform: translateY(-10px) rotateX(8deg);  opacity: .0; }
+  100% { transform: translateY(-10px) rotateX(8deg);  opacity: .0; }
+}
+@keyframes swapB {
+  0%   { transform: translateY(10px) rotateX(-8deg);  opacity: .0; }
+  45%  { transform: translateY(0px) rotateX(0deg);    opacity: 1; }
+  100% { transform: translateY(0px) rotateX(0deg);    opacity: 1; }
+}
+
+.loader-sub {
+  margin: 8px 0 0;
+  opacity: .9;
+  font-size: 14px;
+}
+
+/* --- simple progress stepper in the modal --- */
+.progress {
+  display: flex; gap: 8px; justify-content: center; margin: 10px 0 14px;
+}
+.step {
+  padding: 8px 10px; border-radius: 10px; font-weight: 800; font-family: "THICCBOI";
+  background: #222; border: 2px solid #555; opacity: .8; transition: transform .15s ease, background .15s;
+}
+.step.active { background:#fff; color:#000; transform: translateY(-2px); }
+.step.done   { background:#4caf50; border-color:#4caf50; color:#fff; }
+
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+.mt24 { margin-top: 24px; }
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-copy {
+  background: #222;
+  border: 2px solid #555;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  cursor: pointer;
+}
+.modal-copy:disabled { opacity: .6; cursor: default; }
+
+
+/* optional helpers */
+.cid-label { margin: 6px 0 4px; opacity:.9; }
+.cid-value { font-family: ui-monospace, Menlo, Consolas, monospace; word-break: break-all; margin-bottom: 10px; }
+.meta-block { margin-top: 10px; }
+.modal-ok.primary { background:#00ffa3; }

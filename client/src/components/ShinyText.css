@@ -1,0 +1,18 @@
+/* ShinyText.css */
+.shiny-text{
+  color:#0e0e0e;
+  background:linear-gradient(120deg,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,.85) 50%,
+    rgba(255,255,255,0) 60%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  display:inline-block;
+  animation:shine var(--speed,5s) linear infinite;
+
+  -webkit-text-stroke:0.7px rgba(0,0,0,.35);
+  text-shadow:
+    0 1px 1px rgba(255,255,255,.18),
+    0 0 12px rgba(0,0,0,.12);
+}

@@ -1,0 +1,25 @@
+/* global-cursor.css */
+
+/* Adjust the hotspot (the “click point”) with the two numbers after the URL.
+   Try 8 8 if your graphic is ~16x16; tweak to your art. */
+:root {
+  --taedal-cursor: url("./assets/images/cursor.svg") 8 8, auto;
+}
+
+/* Make it the default cursor everywhere */
+html, body, * {
+  cursor: var(--taedal-cursor) !important;
+}
+
+/* If you want text inputs to keep I-beam, comment this block out */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+textarea {
+  cursor: var(--taedal-cursor) !important;
+}
+
+/* If you want a slightly different hotspot for clickable elements, you can set it here.
+a, button, [role="button"] { cursor: var(--taedal-cursor) !important; }
+*/

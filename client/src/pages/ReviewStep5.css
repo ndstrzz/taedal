@@ -1,0 +1,42 @@
+/* FRAME: reserve space for the stepper */
+.review-frame{
+  position: relative;
+  width: var(--fig-w);
+  transform-origin: top left;
+  transform: scale(var(--k));
+  /* was: padding-bottom: 80px; */
+  padding: 220px 0 80px;   /* ⬅️ 220px top padding clears the stepper height */
+}
+
+/* STEPPER: always above the cards, non-interactive */
+.step, .line {
+  position: absolute;
+  z-index: 100;           /* ⬅️ sits above everything in the frame */
+  pointer-events: none;   /* ⬅️ never block clicks on content */
+}
+
+/* GRID: no extra top margin anymore */
+.rev-grid{
+  position: relative;
+  z-index: 1;             /* below the stepper */
+  margin-top: 0;          /* ⬅️ remove the old margin; spacing now from frame padding */
+  padding: 0 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* (optional) ensure cards don't clip anything that floats above them */
+.review-stage .card{
+  background:#000;
+  border-radius:24px;
+  box-shadow: inset 0 0 0 3px #fff;
+  padding:20px;
+  overflow: visible;      /* ⬅️ no clipping of child content */
+}
+
+/* responsive: keep some room for the stepper on small widths too */
+@media (max-width: 1200px){
+  .review-frame{ transform:none; width:100%; padding: 240px 0 80px; }
+  .rev-grid{ grid-template-columns:1fr; }
+}

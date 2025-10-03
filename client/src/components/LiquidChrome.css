@@ -1,0 +1,6 @@
+.liquidChrome-container {
+  position: fixed;   /* cover the whole viewport */
+  inset: 0;
+  z-index: -1;       /* behind your content */
+  pointer-events: none;
+}

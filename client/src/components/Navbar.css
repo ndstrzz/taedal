@@ -1,0 +1,62 @@
+/* container */
+.t-nav {
+  position: sticky; top: 0; z-index: 9999;
+  background: #000; border-bottom: 1px solid #222;
+}
+/* container */
+.t-nav__inner{
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 72px;
+  /* tighter side padding so the logo hugs the left edge of the bar */
+  padding: 0 8px;                 /* was 0 20px */
+  display: grid;
+  /* left | bigger center | right */
+  grid-template-columns: auto minmax(640px, 1fr) auto;  /* was minmax(420px,1fr) */
+  align-items: center;
+  gap: 12px;                       /* was 20px */
+}
+
+/* left */
+.t-nav__brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+/* left: logo render size (match nav label height) */
+.t-nav__brand-img {
+  height: 30px;     /* tweak to 20–24px if you want tighter/looser match */
+  width: auto;      /* keep aspect ratio */
+  display: block;   /* removes extra inline-gap */
+}
+
+/* center search */
+.t-nav__search{ display:flex; justify-content:center; margin:0; }
+.t-nav__search-input{
+  width: 100%;
+  max-width: 1480px;                /* was 760px → longer pill */
+  height: 35px; line-height: 48px;
+  padding: 0 18px;
+  border: none; outline: none;
+  border-radius: 9999px;
+  background:#4a4a4a; color:#f3f3f3;
+  font-size:15px; font-family: THICCBOI, Inter, Arial, sans-serif;
+  caret-color:#fff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.t-nav__search-input::placeholder { color: #ededed; opacity: 1; letter-spacing: .2px; }
+
+/* right links */
+.t-nav__links {
+  display: inline-flex; align-items: center; gap: 36px;
+  margin: 0; white-space: nowrap;            /* ⟵ keeps them on one line */
+}
+.t-nav__link{
+  color:#fff; text-decoration:none; text-transform: lowercase;
+  font-family: THICCBOI, Inter, Arial, sans-serif; font-size:16px; line-height:1;
+  padding: 8px 6px; border-radius: 10px;
+}
+.t-nav__link:hover{ background: rgba(255,255,255,.06); }
+.t-nav__link.active{ text-decoration: underline; text-underline-offset: 4px; }
+
+@media (max-width: 960px){
+  .t-nav__inner{ grid-template-columns: auto 1fr auto; gap: 12px; height: 64px; }
+  .t-nav__search-input{ max-width: 100%; height: 44px; line-height: 44px; }
+  .t-nav__links{ gap: 18px; }
+}
