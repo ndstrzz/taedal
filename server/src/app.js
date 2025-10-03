@@ -8,33 +8,59 @@ const SQLiteStore = require("connect-sqlite3")(session);
 
 // Routes
 const authRoutes = require("./routes/auth.routes");
-const artworksRoutes = require("./routes/artworks.routes");   // /upload + /api/artwork/*
-const uploadRoutes = require("./routes/upload.routes");       // legacy upload + verify + metadata
+const artworksRoutes = require("./routes/artworks.routes");     // /upload + /api/artwork/*
+const uploadRoutes = require("./routes/upload.routes");         // legacy upload + verify + metadata
 const similarityRoutes = require("./routes/similarity.routes"); // /api/similar
 
 // -------- Env / config --------
 const FRONTEND_BASE = process.env.FRONTEND_BASE || "http://localhost:3000";
-const SESSION_SECRET = process.env.SESSION_SECRET || "dev_session_secret_change_me";
 
-// If API is served behind its own HTTPS origin (e.g. Cloudflare tunnel),
-// cookies must be SameSite=None; Secure to be sent cross-site.
-const USING_TUNNEL =
-  process.env.USE_TUNNEL === "1" ||
-  process.env.USING_TUNNEL === "true" ||
-  false;
+// If you want to pin a specific origin for CORS (recommended), set CORS_ORIGIN, otherwise we fall back to FRONTEND_BASE
+const CORS_ORIGIN = process.env.CORS_ORIGIN || FRONTEND_BASE;
+
+// Session secrets/cookie behaviour
+const SESSION_SECRET = process.env.SESSION_SECRET || "dev_session_secret_change_me";
+const COOKIE_SECURE =
+  String(process.env.SESSION_COOKIE_SECURE || "").toLowerCase() === "true" ||
+  process.env.NODE_ENV === "production"; // Render is HTTPS → true
+const COOKIE_SAMESITE =
+  (process.env.SESSION_COOKIE_SAMESITE || (COOKIE_SECURE ? "none" : "lax")).toLowerCase();
 
 const app = express();
 
-// If you run behind a proxy (Cloudflare tunnel), keep trust proxy on:
+// Render/Cloud provider sits behind a proxy → needed for 'secure' cookies to be honored
 app.set("trust proxy", 1);
 
-// -------- CORS (allow frontend) --------
+// -------- CORS (allow frontend with credentials) --------
+const allowedOrigins = new Set([
+  CORS_ORIGIN.replace(/\/+$/, ""),
+  "http://localhost:3000", // dev convenience
+]);
+
 app.use(
   cors({
-    origin: (origin, cb) => {
-      // allow same-origin / no-origin (curl, mobile apps) and your FE
-      const allowed = new Set([FRONTEND_BASE, "http://localhost:3000"]);
-      if (!origin || allowed.has(origin)) return cb(null, true);
+    origin(origin, cb) {
+      // allow same-origin / no-origin (curl, health checks) and your FE origin
+      if (!origin) return cb(null, true);
+      const norm = String(origin).replace(/\/+$/, "");
+      if (allowedOrigins.has(norm)) return cb(null, true);
+      return cb(null, false);
+    },
+    credentials: true,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    exposedHeaders: ["Set-Cookie"],
+  })
+);
+
+// Ensure preflights are answered
+app.options(
+  "*",
+  cors({
+    origin(origin, cb) {
+      if (!origin) return cb(null, true);
+      const norm = String(origin).replace(/\/+$/, "");
+      if (allowedOrigins.has(norm)) return cb(null, true);
       return cb(null, false);
     },
     credentials: true,
@@ -60,21 +86,12 @@ app.use(
       dir: path.dirname(sessionsFile),
       concurrentDB: false,
     }),
-    cookie: USING_TUNNEL
-      ? {
-          // API on a different HTTPS origin (Cloudflare)
-          secure: true,
-          httpOnly: true,
-          sameSite: "none",
-          maxAge: 1000 * 60 * 60 * 24 * 7,
-        }
-      : {
-          // Local dev: FE http://localhost:3000 -> API http://localhost:5000
-          secure: false,
-          httpOnly: true,
-          sameSite: "lax",
-          maxAge: 1000 * 60 * 60 * 24 * 7,
-        },
+    cookie: {
+      httpOnly: true,
+      secure: COOKIE_SECURE,          // true on Render (HTTPS)
+      sameSite: COOKIE_SAMESITE,      // 'none' on Render → cross-site cookie works
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    },
   })
 );
 
