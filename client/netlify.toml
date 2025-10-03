@@ -4,7 +4,7 @@
 # Run the build from inside the client folder
 base = "client"
 # Install deps + build React
-command = "npm ci && npm run build"
+command = "npm ci && CI=false npm run build"
 # Publish the build output (relative to 'base')
 publish = "build"
 
