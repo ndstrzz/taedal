@@ -35,7 +35,6 @@ app.set("trust proxy", 1);
 const FE_ORIGIN = (process.env.CORS_ORIGIN || process.env.FRONTEND_BASE || "http://localhost:3000").replace(/\/+$/, "");
 
 app.use((req, res, next) => {
-  // only allow our frontend + localhost dev
   const origin = req.headers.origin;
   const allow =
     !origin ||
@@ -44,19 +43,23 @@ app.use((req, res, next) => {
 
   if (allow) {
     res.setHeader("Access-Control-Allow-Origin", origin || FE_ORIGIN);
-    res.setHeader("Vary", "Origin");
+    // Vary on both Origin and requested headers to cache correctly
+    res.setHeader("Vary", "Origin, Access-Control-Request-Headers");
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+
+    // Mirror back what the browser intends to send (covers Cache-Control, etc.)
+    const reqHeaders = req.headers["access-control-request-headers"];
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, Authorization, X-Requested-With"
+      reqHeaders || "Content-Type, Authorization, X-Requested-With, Cache-Control"
     );
   }
 
-  // short-circuit preflight
   if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
 });
+
 
 
 // -------- Body parsing --------

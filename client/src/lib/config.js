@@ -53,9 +53,9 @@ export function apiFetch(path, opts = {}) {
     credentials: "include",
     cache: "no-store",
     headers: {
-      "Cache-Control": "no-store",
-      ...(opts.headers || {}),
-    },
+  ...(opts.headers || {}),
+},
+
     ...opts,
   });
 }
