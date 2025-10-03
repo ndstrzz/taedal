@@ -1,5 +1,6 @@
-// client/public/config.js
+// Runs before your app (included in index.html)
 window.__CONFIG__ = {
-  API_BASE: "https://taedal.onrender.com",
-  FRONTEND_BASE: "https://taedal.netlify.app" // or leave undefined to default to window.location.origin
+  // empty string => use same-origin, so requests go to /api/* and Netlify proxies them
+  API_BASE: "",
+  // optional; FRONTEND_BASE is auto-detected in code if omitted
 };
